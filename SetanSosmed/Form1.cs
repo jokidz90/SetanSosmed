@@ -18,7 +18,7 @@ namespace SetanSosmed
 {
     public partial class Form1 : Form
     {
-        private List<string> allMessages = new List<string>();
+        private static List<string> allMessages = new List<string>();
         private TwitterAccess access = null;
         string userName = "";
         string consumerKey = "";
@@ -63,6 +63,7 @@ namespace SetanSosmed
             long latestID = 0;
             while (!_isCanceling)
             {
+                allMessages = File.ReadAllLines(Application.StartupPath + "//allMessages.txt").ToList();
                 if (sleepMinRangeStart >= sleepMinRangeEnd)
                     sleepMinRangeStart = sleepMinRangeEnd + 10;
                 var sleepMinute = rnd.Next(sleepMinRangeStart, sleepMinRangeEnd);
@@ -75,6 +76,7 @@ namespace SetanSosmed
                     continue;
                 }
 
+                AddLog(string.Format("### SEARCH RESULT FOR {0} : {1} ###", search, searchResult.Count()));
                 for (int i = searchResult.Count() - 1; i >= 0; i--)
                 {
                     var tw = searchResult.ElementAtOrDefault(i);
@@ -89,7 +91,7 @@ namespace SetanSosmed
 
                     bool isSuccess = false;
                     int ops = rnd.Next(1, 101) % 12;
-                    ops = 2;
+
                     if (ops == 0 || ops == 5 || ops == 6 || ops == 7)
                     {
                         //LIKES
@@ -154,7 +156,8 @@ namespace SetanSosmed
                             AddLog(GetLastError());
                     }
 
-                    Thread.Sleep(sleepMinute * 6 * 1000);
+                    AddLog(string.Format("SLEEPING FOR {0} Sec", (sleepMinute * 10)));
+                    Thread.Sleep(sleepMinute * 10 * 1000);
                 }
             }
         }
