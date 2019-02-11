@@ -87,64 +87,71 @@ namespace SetanSosmed
                     if (latestID < tw.Id)
                         latestID = tw.Id;
 
-                    int ops = rnd.Next(1, 101) % 7;
-                    if (ops == 0 || ops == 1)
+                    bool isSuccess = false;
+                    int ops = rnd.Next(1, 101) % 12;
+                    ops = 2;
+                    if (ops == 0 || ops == 5 || ops == 6 || ops == 7)
                     {
                         //LIKES
-                        bool res = access.PostLike(tw.Id);
-                        AddLog("POST LIKES: " + res);
+                        isSuccess = access.PostLike(tw.Id);
+                        AddLog("POST LIKES: " + isSuccess);
                     }
-                    else if (ops == 2 || ops == 3)
+                    else if (ops == 1 || ops == 8)
                     {
                         //RETWEET
-                        var res = access.PostRetweet(tw.Id);
-                        AddLog("POST RETWEET: " + (res != null));
+                        isSuccess = (access.PostRetweet(tw.Id) != null);
+                        AddLog("POST RETWEET: " + isSuccess);
                     }
-                    else if (ops == 4)
+                    else if (ops == 2 || ops == 9 || ops == 10 || ops == 11)
                     {
                         //REPLY NO IMAGES
 
                         string msg = allMessages[rnd.Next(0, allMessages.Count)];
-                        var res = access.PostReplyTweet(tw.Id, msg);
-                        AddLog("POST REPLY: " + (res != null));
+                        isSuccess = (access.PostReplyTweet(tw.Id, msg) != null);
+                        AddLog("POST REPLY: " + isSuccess);
                     }
-                    else if (ops == 5)
+                    else if (ops == 3)
                     {
                         //REPLAY WITH IMAGES
                         var img = string.Format(@"{0}\{1}.jpg", imgPath, rnd.Next(0, imgLength));
                         if (File.Exists(img))
                         {
-                            var res = access.PostReplyTweetWithImage(tw.Id, "", File.ReadAllBytes(img));
-                            AddLog("POST REPLY WITH IMG: " + (res != null));
+                            isSuccess = (access.PostReplyTweetWithImage(tw.Id, "", File.ReadAllBytes(img)) != null);
+                            AddLog("POST REPLY WITH IMG: " + isSuccess);
                         }
                         else
                         {
                             string msg = allMessages[rnd.Next(0, allMessages.Count)];
-                            var res = access.PostReplyTweet(tw.Id, msg);
-                            AddLog("POST REPLY: " + (res != null));
+                            isSuccess = (access.PostReplyTweet(tw.Id, msg) != null);
+                            AddLog("POST REPLY: " + isSuccess);
                         }
                     }
-                    else if (ops == 6)
+                    else if (ops == 4)
                     {
                         //REPLAY WITH IMAGES & TEXT
                         string msg = allMessages[rnd.Next(0, allMessages.Count)];
                         var img = string.Format(@"{0}\{1}.jpg", imgPath, rnd.Next(0, imgLength));
                         if (File.Exists(img))
                         {
-                            var res = access.PostReplyTweetWithImage(tw.Id, msg, File.ReadAllBytes(img));
-                            AddLog("POST REPLY WITH IMG & TEXT: " + (res != null));
+                            isSuccess = (access.PostReplyTweetWithImage(tw.Id, msg, File.ReadAllBytes(img)) != null);
+                            AddLog("POST REPLY WITH IMG & TEXT: " + isSuccess);
                         }
                         else
                         {
-                            var res = access.PostReplyTweet(tw.Id, msg);
-                            AddLog("POST REPLY: " + (res != null));
+                            isSuccess = (access.PostReplyTweet(tw.Id, msg) != null);
+                            AddLog("POST REPLY: " + isSuccess);
                         }
                     }
 
+                    if (!isSuccess)
+                        AddLog(GetLastError());
+
                     if ((ops + 1) % 2 == 0)
                     {
-                        var res = access.FollowUser(tw.CreatedBy.Id);
-                        AddLog("FOLLOW USER: " + res);
+                        isSuccess = access.FollowUser(tw.CreatedBy.Id);
+                        AddLog("FOLLOW USER: " + isSuccess);
+                        if (!isSuccess)
+                            AddLog(GetLastError());
                     }
 
                     Thread.Sleep(sleepMinute * 6 * 1000);
