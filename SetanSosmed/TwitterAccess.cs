@@ -85,22 +85,37 @@ namespace SetanSosmed
             return isSuccess;
         }
 
-        public IEnumerable<ITweet> FetchTweetDataFoward(string searchTerm, DateTime since)
+        public IEnumerable<ITweet> FetchTweetDataFoward(string searchTerm, long sinceId)
         {
             IEnumerable<ITweet> result = null;
 
             Auth.ExecuteOperationWithCredentials(_creds, () =>
             {
                 SearchTweetsParameters searchParameter = null;
-                searchParameter = new SearchTweetsParameters(searchTerm)
+                if (sinceId > 0)
                 {
-                    MaximumNumberOfResults = _dataCount,
-                    SearchType = SearchResultType.Recent,
-                    Filters = TweetSearchFilters.None,
-                    Since = since,
-                    Lang = LanguageFilter.Indonesian,
-                    TweetSearchType = TweetSearchType.OriginalTweetsOnly
-                };
+                    searchParameter = new SearchTweetsParameters(searchTerm)
+                    {
+                        MaximumNumberOfResults = _dataCount,
+                        SearchType = SearchResultType.Recent,
+                        Filters = TweetSearchFilters.None,
+                        SinceId = sinceId,
+                        Lang = LanguageFilter.Indonesian,
+                        TweetSearchType = TweetSearchType.OriginalTweetsOnly
+                    };
+                }
+                else
+                {
+                    searchParameter = new SearchTweetsParameters(searchTerm)
+                    {
+                        MaximumNumberOfResults = _dataCount,
+                        SearchType = SearchResultType.Recent,
+                        Filters = TweetSearchFilters.None,
+                        SinceId = sinceId,
+                        Lang = LanguageFilter.Indonesian,
+                        TweetSearchType = TweetSearchType.OriginalTweetsOnly
+                    };
+                }
 
                 result = Search.SearchTweets(searchParameter);
                 if (result != null)
@@ -166,15 +181,28 @@ namespace SetanSosmed
             return data;
         }
 
+        public ITweet PostReplyTweet(long replyTo, string content)
+        {
+            Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
+            var tweetToReplyTo = Tweet.GetTweet(replyTo);
+            ITweet data = Tweet.PublishTweet(string.Format("{0} @{1}", content, tweetToReplyTo.CreatedBy.ScreenName), new PublishTweetOptionalParameters
+            {
+                InReplyToTweet = tweetToReplyTo,
+                AutoPopulateReplyMetadata = true,
+                PlaceId = "ChIJB0vJuDb0aS4R9oJ8iznVpm4"
+            });
+            return data;
+        }
+
         public ITweet PostReplyTweetWithImage(long replyTo, string content, byte[] img)
         {
             Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
             var listMedia = new List<byte[]>();
             listMedia.Add(img);
-            var Indo = new Coordinates(112.71917, -7.27683);
-            ITweet data = Tweet.PublishTweet(content, new PublishTweetOptionalParameters
+            var tweetToReplyTo = Tweet.GetTweet(replyTo);
+            ITweet data = Tweet.PublishTweet(string.Format("{0} @{1}", content, tweetToReplyTo.CreatedBy.ScreenName), new PublishTweetOptionalParameters
             {
-                InReplyToTweetId = replyTo,
+                InReplyToTweet = tweetToReplyTo,
                 MediaBinaries = listMedia,
                 PlaceId = "ChIJB0vJuDb0aS4R9oJ8iznVpm4"
             });
