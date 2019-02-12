@@ -88,6 +88,8 @@ namespace SetanSosmed
                         continue;
                     if (!tw.FullText.ToLower().Contains(search.ToLower()))
                         continue;
+                    if (tw.CreatedBy.ScreenName.IsEqual(userName))
+                        continue;
 
                     AddLog(string.Format("({2}) @{0} : {1}", tw.CreatedBy.ScreenName, tw.Text, tw.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")));
                     if (latestID < tw.Id)
@@ -95,7 +97,7 @@ namespace SetanSosmed
 
                     bool isSuccess = false;
                     int ops = rnd.Next(1, 101) % 12;
-                    ops = 4;
+
                     if (ops == 0 || ops == 5 || ops == 6 || ops == 7)
                     {
                         //LIKES
