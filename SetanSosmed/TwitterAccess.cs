@@ -185,7 +185,7 @@ namespace SetanSosmed
         {
             Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
             var tweetToReplyTo = Tweet.GetTweet(replyTo);
-            ITweet data = Tweet.PublishTweet(string.Format("{0} {1}", content, tweetToReplyTo.CreatedBy.Name), new PublishTweetOptionalParameters
+            ITweet data = Tweet.PublishTweet(string.Format(content, tweetToReplyTo.CreatedBy.Name), new PublishTweetOptionalParameters
             {
                 InReplyToTweet = tweetToReplyTo,
                 AutoPopulateReplyMetadata = true,
@@ -200,9 +200,10 @@ namespace SetanSosmed
             var listMedia = new List<byte[]>();
             listMedia.Add(img);
             var tweetToReplyTo = Tweet.GetTweet(replyTo);
-            ITweet data = Tweet.PublishTweet(string.Format("{0} {1}", content, tweetToReplyTo.CreatedBy.Name), new PublishTweetOptionalParameters
+            ITweet data = Tweet.PublishTweet(string.Format(content, "@"+tweetToReplyTo.CreatedBy.ScreenName), new PublishTweetOptionalParameters
             {
                 InReplyToTweet = tweetToReplyTo,
+                AutoPopulateReplyMetadata = true,
                 MediaBinaries = listMedia,
                 PlaceId = "ChIJB0vJuDb0aS4R9oJ8iznVpm4"
             });

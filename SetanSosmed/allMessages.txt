@@ -1,15 +1,15 @@
-﻿Anda mencari saya?
-Anda memanggil saya?
-Ada apa?
-Hai.. 
-Ada apa kok panggil saya?
-Haloo
-Ada apa?
-Gimana?
-Hai?
-Kenapa 
-Aku selalu ada di belakangmu
-Kamu kangen aku
-Kenapa panggil saya?
-Kamu ingin ketemu aku?
-Apa kabar 
+﻿Anda mencari saya {0} ?
+Anda memanggil saya {0} ?
+Ada apa {0} ?
+Hai {0}.. 
+Ada apa {0}, kok panggil saya?
+Haloo {0}
+Ada apa {0}?
+Gimana {0}?
+Hai {0}?
+Kenapa {0}?
+Aku selalu ada di belakangmu {0}
+Kamu kangen aku {0}
+Kenapa panggil saya {0}?
+Kamu ingin ketemu aku {0}?
+Apa kabar {0}?

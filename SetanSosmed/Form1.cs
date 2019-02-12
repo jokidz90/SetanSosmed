@@ -72,7 +72,11 @@ namespace SetanSosmed
                 if (searchResult == null || searchResult.Count() == 0)
                 {
                     AddLog(string.Format("SLEEPING FOR {0} Min", sleepMinute.ToString("N2")));
-                    Thread.Sleep(sleepMinute * 60 * 1000);
+                    for (int sec = 0; sec < sleepMinute; sec++)
+                    {
+                        SetLog(string.Format("COUNT DOWN: {0}/{1} Min", sec, sleepMinute));
+                        Thread.Sleep(1 * 60 * 1000);
+                    }
                     continue;
                 }
 
@@ -91,7 +95,7 @@ namespace SetanSosmed
 
                     bool isSuccess = false;
                     int ops = rnd.Next(1, 101) % 12;
-
+                    ops = 4;
                     if (ops == 0 || ops == 5 || ops == 6 || ops == 7)
                     {
                         //LIKES
@@ -156,17 +160,43 @@ namespace SetanSosmed
                             AddLog(GetLastError());
                     }
 
+                    int sleepSecond = sleepMinute * 10;
                     AddLog(string.Format("SLEEPING FOR {0} Sec", (sleepMinute * 10)));
-                    Thread.Sleep(sleepMinute * 10 * 1000);
+                    for (int sec = 0; sec < sleepSecond; sec++)
+                    {
+                        SetLog(string.Format("COUNT DOWN: {0}/{1} Sec", sec, sleepSecond));
+                        Thread.Sleep(1 * 1000);
+                    }
                 }
             }
         }
 
+        private static List<string> logs = new List<string>();
+        private int maxLog = 25;
         private void AddLog(string log)
         {
             txtLog.BeginInvoke((Action)(() =>
             {
-                txtLog.Text = string.Format("-{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), log + Environment.NewLine + txtLog.Text);
+                logs.Insert(0, string.Format("-{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), log));
+                if (logs.Count > maxLog)
+                {
+                    var newLog = new List<string>();
+                    for (int i = 0; i < maxLog; i++)
+                        newLog.Add(logs[i]);
+                    logs = newLog;
+                }
+                txtLog.Text = string.Join(Environment.NewLine, logs);
+            }));
+        }
+
+        private void SetLog(string log)
+        {
+            txtLog.BeginInvoke((Action)(() =>
+            {
+                if (logs.Count == 0)
+                    logs.Add(log);
+                logs[0] = string.Format("-{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), log);
+                txtLog.Text = string.Join(Environment.NewLine, logs);
             }));
         }
 
